@@ -1,134 +1,142 @@
-# Raj Healthcare — Modern Clinic & Doctor Appointment Booking System
+# 🏥 Raj Healthcare — Modern Clinic & Doctor Appointment Booking System
 
-A modern, minimalist, and responsive Doctor Appointment Booking & Management System for **Raj Healthcare**, crafted with **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, **shadcn/ui**, **Supabase**, and **Resend**. Ready for deployment on **Vercel** with GitHub integration and custom domains.
+<div align="center">
+
+![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)
+![Supabase](https://img.shields.io/badge/Supabase-Database%20%26%20Auth-3ECF8E?style=for-the-badge&logo=supabase)
+![Resend](https://img.shields.io/badge/Resend-Email%20API-black?style=for-the-badge&logo=resend)
+![Vercel](https://img.shields.io/badge/Vercel-Deployment%20Ready-black?style=for-the-badge&logo=vercel)
+
+<p align="center">
+  A modern, minimalist, and responsive Doctor Appointment Booking & Management System designed for clinics and healthcare providers. Features end-to-end patient scheduling, real-time doctor availability, role-based staff authentication, automated email vouchers via Resend, and secure PostgreSQL storage with Supabase.
+</p>
+
+</div>
 
 ---
 
-## 🔒 Mandatory Portal Authentication & Access Gate
+## 🌟 Key Highlights
 
-The entire application is protected behind a secure session gate (`src/middleware.ts`). **Without logging in, users cannot access the website or administrative functions.**
+- **🔒 Protected Clinic Portal**: Complete site access is secured by Next.js Edge Middleware. Unauthenticated visits are safely redirected to the sign-in portal.
+- **⚡ 3-Step Streamlined Booking**: Patients select a medical consultation, choose a 30-minute verified slot, enter contact details, and receive an instant booking pass.
+- **✉️ Automated Email Confirmations**: Professional HTML appointment passes and 1-click Google/Apple Calendar links dispatched via Resend.
+- **👥 Role-Based User Management**: Primary administrator dashboard with dedicated interface for creating and managing doctor and staff logins.
+- **🇮🇳 Indian Rupee (₹ INR) Formatting**: Standardized medical consultation fees (Primary care, preventative screening, and specialist evaluations).
+- **🛡️ Data Privacy by Design**: Only essential patient contact info is retained; protected by PostgreSQL Row-Level Security (RLS) policies.
 
-- Any unauthenticated request to `/` or `/admin` is automatically redirected to the secure login portal: [`/login`](http://localhost:3000/login).
-- **Privacy & Security**: To maintain maximum confidentiality, the login screen and home screen do **not** display or prefill any credentials or emails.
+---
 
-### 🔑 Primary Admin Credentials
-| Field | Value |
+## 📸 Architecture & Modules
+
+```
+raj-healthcare/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx               # Patient consultation showcase & booking flow
+│   │   ├── login/page.tsx         # Unified portal sign-in gateway
+│   │   ├── confirmation/[id]/     # Interactive appointment voucher & calendar sync
+│   │   ├── admin/
+│   │   │   ├── page.tsx           # Clinic appointments dashboard & status actions
+│   │   │   ├── services/page.tsx  # Consultation fee & service editor
+│   │   │   ├── settings/page.tsx  # Weekly clinic operating hours & availability
+│   │   │   └── users/page.tsx     # Admin-only staff & user credential management
+│   │   └── api/                   # RESTful route handlers for bookings & auth
+│   ├── components/                # Modular UI primitives (shadcn/ui & Tailwind)
+│   ├── lib/                       # Supabase client, Resend templates, data store
+│   └── middleware.ts              # Edge protection gatekeeper
+└── supabase/
+    └── schema.sql                 # DDL, indexes, seed data, and RLS policies
+```
+
+---
+
+## 🚀 Quick Start (Local Development)
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/ragsaroj911/raj-healthcare.git
+cd raj-healthcare
+npm install
+```
+
+### 2. Environment Configuration
+Copy `.env.example` to `.env.local`:
+```bash
+cp .env.example .env.local
+```
+
+Fill in your service credentials in `.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL="https://your-project-id.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+
+RESEND_API_KEY="re_your_resend_api_key"
+RESEND_FROM_EMAIL="Raj Healthcare <onboarding@resend.dev>"
+ADMIN_NOTIFICATION_EMAIL="admin@yourdomain.com"
+
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+### 3. Run Development Server
+```bash
+npm run dev
+```
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+
+---
+
+## 🔐 Authentication & Role Management
+
+The portal features a dual-layer role-based permission structure:
+
+| Role | Access Permissions |
 |---|---|
-| **Portal URL** | [http://localhost:3000/login](http://localhost:3000/login) |
-| **Admin Email** | `ragsaroj911@gmail.com` |
-| **Admin Password** | `Vikram@3000` |
-| **Role** | `admin` (Full permissions) |
+| **Admin** | Full system control: view/edit all appointments, modify consultation fees, change clinic hours, and **create/manage staff accounts**. |
+| **Doctor** | View daily schedule, update patient consultation statuses (Confirm, Complete, Cancel), and review medical symptoms. |
+| **Staff** | Front-desk scheduling, customer registration, and check-in confirmation. |
+
+> [!NOTE]
+> For confidentiality, the sign-in form does not expose or pre-populate credentials. All authentication sessions are signed via secure HTTP cookies.
 
 ---
 
-## 👥 Admin-Exclusive Feature: Add More Users & Staff
+## 🗄️ Database Setup & Row-Level Security
 
-Once logged in with the primary Admin account (`ragsaroj911@gmail.com`), the Admin receives an exclusive **"Add Staff"** button in the top navigation bar linking to:
-👉 **`/admin/users`** (Staff & Portal User Management)
+The system uses Supabase (PostgreSQL) with granular Row-Level Security (RLS) to safeguard records.
 
-### Capabilities:
-- **Create New Portal Accounts**: Add doctors, receptionists, or clinic staff with their Name, Login Email, and Password.
-- **Assign Roles**:
-  - `admin`: Full privileges, system settings, and user management.
-  - `doctor`: Consultation views, appointment schedule, patient notes.
-  - `staff`: Front-desk appointments, check-ins, and schedule coordination.
-- **Database Storage**: User credentials and SHA-256 hashed passwords are saved securely to Supabase in `public.portal_users`.
-- **Access Restriction**: Non-admin users who log in can view appointments and manage bookings, but are strictly blocked (`403 Forbidden`) from creating or managing user logins.
-- **One-Click Logout**: Available in the top-right header for immediate session termination.
+### Applying the Schema:
+1. Open your Supabase project's **SQL Editor**.
+2. Run the provided script: [`supabase/schema.sql`](supabase/schema.sql).
+3. The migration will initialize:
+   - `public.portal_users`: Hashed staff credentials and assigned clinic roles.
+   - `public.services`: Active medical consultations and duration parameters.
+   - `public.business_hours`: Clinic operating hours per weekday.
+   - `public.appointments`: Booked time slots, patient references, and status tracking.
 
 ---
 
-## ✨ System Features
+## 🌐 Deploy to Vercel
 
-### 👤 Patient Experience (Authenticated)
-- **Medical Consultation Catalog**: General Physician (₹499), Specialist Care (₹999), Comprehensive Health Check (₹1,499), Follow-up (₹299).
-- **Dynamic Slot Availability**: 14-day interactive calendar with conflict prevention against booked appointments.
-- **Frictionless Booking Form**: Clean form requiring only Name and Email (Phone number is optional).
-- **Immediate Confirmation Pass**:
-  - Unique booking reference code (e.g. `RH-8F3K9A`).
-  - One-click **Add to Google Calendar** with pre-filled clinic visit notes.
-  - Transparent checklist for clinic visit.
+This repository is optimized for one-click deployment on **Vercel**:
 
-### 🛡️ Clinic Management Dashboard (`/admin`)
-- **Key Metrics Overview**: Real-time counters for Total Bookings, Pending Review, Confirmed, and Projected Revenue (₹ INR).
-- **Appointment Management**:
-  - Live search by patient name, email, or reference code.
-  - Status filters (`All`, `Pending`, `Confirmed`, `Completed`, `Cancelled`).
-  - 1-click status actions (**Confirm**, **Complete**, **Cancel**).
-- **Service Management (`/admin/services`)**:
-  - Add new medical services, session durations, and consultation fees in ₹ INR.
-- **Operating Hours & Availability (`/admin/settings`)**:
-  - Configure open/close times and days off per week.
-- **Top-Right Navigation**: Dedicated **"Back"** button and **"Logout"** button on every page.
-
-### ✉️ Resend Email Integration
-- **Patient Confirmation Email**: Sends mobile-optimized HTML passes with appointment details and calendar invites.
-- **Admin Notification Email**: Alerts the clinic administrator upon each new appointment booking.
-- **Verified Resend SDK**: Integrated with your production Resend API key.
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Framework** | Next.js 14 (App Router) |
-| **Language** | TypeScript |
-| **Styling** | Tailwind CSS & Lucide Icons |
-| **Components** | shadcn/ui architectural primitives |
-| **Database & Auth** | Supabase (PostgreSQL with Row Level Security) |
-| **Transactional Email** | Resend SDK (`resend`) |
-| **Deployment** | Vercel (Edge-ready) & GitHub |
-
----
-
-## 🗄️ Supabase Setup & Database Migration
-
-Your Supabase project URL is connected:
-`https://bmqxgkjjjyzqjusdndht.supabase.co`
-
-### Running the Database Migration:
-1. Open the Supabase SQL Editor:  
-   👉 **[https://supabase.com/dashboard/project/bmqxgkjjjyzqjusdndht/sql/new](https://supabase.com/dashboard/project/bmqxgkjjjyzqjusdndht/sql/new)**
-2. Copy and paste the contents of [`supabase/schema.sql`](supabase/schema.sql).
-3. Click **"Run"**.
-
-This automatically creates:
-- `public.portal_users` (with seeded Admin `ragsaroj911@gmail.com`)
-- `public.services` (with Indian Rupee consultation services)
-- `public.business_hours` (Monday - Saturday clinic timings)
-- `public.appointments` (Patient bookings with reference codes)
-- Row Level Security (RLS) policies protecting clinic data.
-
----
-
-## 🌐 Deploy to Vercel & Connect Custom Domain
-
-1. **Push to GitHub**:
+1. Push your changes to GitHub:
    ```bash
-   git add .
-   git commit -m "Add portal authentication and staff user management"
-   git remote add origin https://github.com/<your-username>/raj-healthcare.git
-   git branch -M main
-   git push -u origin main
+   git push origin main
    ```
-2. **Deploy on Vercel**:
-   - Go to [vercel.com/new](https://vercel.com/new) and import your repository.
-   - Under **Environment Variables**, paste:
-     ```env
-     NEXT_PUBLIC_SUPABASE_URL=https://bmqxgkjjjyzqjusdndht.supabase.co
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcXhna2pqanl6cWp1c2RuZGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMjgxNjcsImV4cCI6MjEwODgwNDE2N30.9hBKVhLxDekK5JPK4qcN-EFCiEegq1oFVcA7bTM8byI
-     SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcXhna2pqanl6cWp1c2RuZGh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMjgxNjcsImV4cCI6MjEwODgwNDE2N30.9hBKVhLxDekK5JPK4qcN-EFCiEegq1oFVcA7bTM8byI
-     RESEND_API_KEY=your_resend_api_key_here
-     RESEND_FROM_EMAIL=Raj Healthcare <onboarding@resend.dev>
-     NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-     ```
-   - Click **Deploy**.
-3. **Custom Domain on Vercel**:
-   - In Vercel Project Settings &rarr; **Domains**, enter your domain (e.g. `rajhealthcare.com` or `clinic.yourdomain.com`).
-   - Add the `CNAME` or `A` record provided by Vercel in your domain registrar. Vercel automatically activates free SSL.
+2. Import the repository in [vercel.com/new](https://vercel.com/new).
+3. Add the environment variables specified in `.env.example`.
+4. Click **Deploy**. Vercel will build and provision an SSL-secured production instance.
+
+### Custom Domain Configuration:
+In your Vercel Project Dashboard:
+- Navigate to **Settings** &rarr; **Domains**.
+- Add your domain (e.g. `clinic.yourdomain.com`).
+- Add the corresponding `CNAME` or `A` record in your DNS provider.
 
 ---
 
 ## 📄 License
-MIT License. Raj Healthcare.
+This project is licensed under the MIT License.

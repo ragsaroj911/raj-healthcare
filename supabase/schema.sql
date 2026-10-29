@@ -126,8 +126,8 @@ VALUES
   ('Follow-up & Prescription Review', 'Review test results, evaluate treatment progress, and adjust ongoing medical prescriptions with your doctor.', 20, 299.00, 'Follow-up', true)
 ON CONFLICT DO NOTHING;
 
--- Seed Default Admin User: ragsaroj911@gmail.com (Password: Vikram@3000)
+-- Seed Default Admin User
 INSERT INTO public.portal_users (email, password_hash, name, role)
 VALUES
-  ('ragsaroj911@gmail.com', 'ee5c69eb5e891b67dfe8e3e18715966bf58673a89320929c801137e59c6373d7', 'Admin Vikram', 'admin')
+  ('ragsaroj911@gmail.com', 'ee5c69eb5e891b67dfe8e3e18715966bf58673a89320929c801137e59c6373d7', 'Admin', 'admin')
 ON CONFLICT (email) DO NOTHING;
