@@ -64,19 +64,21 @@ export function CustomerForm({
             <Input
               type="email"
               required
-              placeholder="jane@example.com"
+              placeholder="e.g. yourname@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <span className="block text-[11px] text-emerald-600 mt-1">
+              ✓ Confirmation voucher & calendar invite will be sent to this email.
+            </span>
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-700 mb-1">
-              Phone Number <span className="text-red-500">*</span>
+              Phone Number <span className="text-slate-400 font-normal">(optional)</span>
             </label>
             <Input
               type="tel"
-              required
               placeholder="+1 (555) 000-0000"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}

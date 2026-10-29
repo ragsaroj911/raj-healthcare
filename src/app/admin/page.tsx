@@ -107,9 +107,9 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Appointments Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Raj Healthcare — Patient Appointments</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Manage your schedule, confirm customer bookings, and track appointment statuses.
+            Doctor & clinic management dashboard. Confirm patient slots, review symptoms, and manage daily consultations.
           </p>
         </div>
 
@@ -199,9 +199,9 @@ export default function AdminDashboardPage() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
-                  <th className="py-3 px-4">Reference</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Service</th>
+                  <th className="py-3 px-4">Patient Reference</th>
+                  <th className="py-3 px-4">Patient Details</th>
+                  <th className="py-3 px-4">Consultation</th>
                   <th className="py-3 px-4">Schedule</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4 text-right">Actions</th>
@@ -218,7 +218,7 @@ export default function AdminDashboardPage() {
                       <td className="py-3.5 px-4">
                         <div className="font-semibold text-slate-900">{apt.customer_name}</div>
                         <div className="text-[11px] text-slate-500">{apt.customer_email}</div>
-                        <div className="text-[11px] text-slate-400">{apt.customer_phone}</div>
+                        <div className="text-[11px] text-slate-400">{apt.customer_phone || "No phone"}</div>
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="font-medium text-slate-800">

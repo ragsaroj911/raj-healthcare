@@ -1,12 +1,24 @@
-import { Service, BusinessHours, Appointment } from "../types";
+import { Service, BusinessHours, Appointment, PortalUser } from "../types";
 import { INITIAL_SERVICES, INITIAL_BUSINESS_HOURS, INITIAL_APPOINTMENTS } from "./initial-data";
 import { createServerSupabaseClient } from "../supabase/server";
+
+export const INITIAL_USERS: PortalUser[] = [
+  {
+    id: "usr-admin-1",
+    email: "ragsaroj911@gmail.com",
+    name: "Admin Vikram",
+    role: "admin",
+    password_hash: "ee5c69eb5e891b67dfe8e3e18715966bf58673a89320929c801137e59c6373d7", // Vikram@3000
+    created_at: new Date().toISOString(),
+  },
+];
 
 // Fallback in-memory singleton for development or when Supabase keys aren't set
 class InMemoryStore {
   services: Service[] = [...INITIAL_SERVICES];
   businessHours: BusinessHours[] = [...INITIAL_BUSINESS_HOURS];
   appointments: Appointment[] = [...INITIAL_APPOINTMENTS];
+  users: PortalUser[] = [...INITIAL_USERS];
 
   getServices(): Service[] {
     return this.services;
@@ -68,11 +80,29 @@ class InMemoryStore {
     };
     return this.appointments[idx];
   }
+
+  getUsers(): PortalUser[] {
+    return this.users;
+  }
+
+  findUserByEmail(email: string): PortalUser | null {
+    return this.users.find((u) => u.email.toLowerCase() === email.toLowerCase()) || null;
+  }
+
+  addUser(user: Omit<PortalUser, "id">): PortalUser {
+    const newUser: PortalUser = {
+      ...user,
+      id: `usr-${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+    this.users.unshift(newUser);
+    return newUser;
+  }
 }
 
 // Global singleton across hot reloads in development
 const globalStore = global as unknown as { __app_store?: InMemoryStore };
-if (!globalStore.__app_store) {
+if (!globalStore.__app_store || typeof globalStore.__app_store.findUserByEmail !== "function") {
   globalStore.__app_store = new InMemoryStore();
 }
 
@@ -124,3 +154,33 @@ export async function getAppointmentsData(): Promise<Appointment[]> {
   return inMemoryStore.getAppointments();
 }
 
+export async function getPortalUsersData(): Promise<PortalUser[]> {
+  const supabase = createServerSupabaseClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("portal_users")
+      .select("id, email, name, role, created_at")
+      .order("created_at", { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      return data as PortalUser[];
+    }
+  }
+  return inMemoryStore.getUsers().map(({ password_hash, ...u }) => u as PortalUser);
+}
+
+export async function findPortalUserByEmail(email: string): Promise<PortalUser | null> {
+  const supabase = createServerSupabaseClient();
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("portal_users")
+      .select("*")
+      .eq("email", email.toLowerCase())
+      .single();
+
+    if (!error && data) {
+      return data as PortalUser;
+    }
+  }
+  return inMemoryStore.findUserByEmail(email);
+}

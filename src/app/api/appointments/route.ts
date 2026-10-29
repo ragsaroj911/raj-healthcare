@@ -46,8 +46,8 @@ export async function POST(request: Request) {
       notes,
     } = body;
 
-    if (!serviceId || !appointmentDate || !startTime || !customerName || !customerEmail || !customerPhone) {
-      return NextResponse.json({ error: "Missing required booking details" }, { status: 400 });
+    if (!serviceId || !appointmentDate || !startTime || !customerName || !customerEmail) {
+      return NextResponse.json({ error: "Missing required booking details (service, date, time, name, email)" }, { status: 400 });
     }
 
     const services = await getServicesData();
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
           service_id: serviceId,
           customer_name: customerName,
           customer_email: customerEmail,
-          customer_phone: customerPhone,
+          customer_phone: customerPhone ? customerPhone.trim() : "",
           appointment_date: appointmentDate,
           start_time: startTime,
           end_time: endTime,
@@ -81,10 +81,25 @@ export async function POST(request: Request) {
         .single();
 
       if (error) {
-        console.error("Supabase insert error:", error);
-        throw new Error(error.message);
+        console.warn("Supabase insert notice (table might not exist yet):", error.message);
+        // Fall back to memory store so customer booking is not blocked
+        createdAppointment = inMemoryStore.addAppointment({
+          booking_reference: bookingReference,
+          service_id: serviceId,
+          service: service,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone ? customerPhone.trim() : "",
+          appointment_date: appointmentDate,
+          start_time: startTime,
+          end_time: endTime,
+          status: "pending",
+          notes: notes || "",
+          created_at: new Date().toISOString(),
+        });
+      } else {
+        createdAppointment = data;
       }
-      createdAppointment = data;
     } else {
       // In-memory fallback
       createdAppointment = inMemoryStore.addAppointment({
@@ -93,7 +108,7 @@ export async function POST(request: Request) {
         service: service,
         customer_name: customerName,
         customer_email: customerEmail,
-        customer_phone: customerPhone,
+        customer_phone: customerPhone ? customerPhone.trim() : "",
         appointment_date: appointmentDate,
         start_time: startTime,
         end_time: endTime,

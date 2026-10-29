@@ -26,7 +26,7 @@ export interface Appointment {
   service?: Service;
   customer_name: string;
   customer_email: string;
-  customer_phone: string;
+  customer_phone?: string;
   appointment_date: string; // YYYY-MM-DD
   start_time: string;       // HH:mm
   end_time: string;         // HH:mm
@@ -48,7 +48,19 @@ export interface BookingFormData {
   time: string; // HH:mm
   customerName: string;
   customerEmail: string;
-  customerPhone: string;
+  customerPhone?: string;
   notes?: string;
 }
+
+export type UserRole = 'admin' | 'doctor' | 'staff';
+
+export interface PortalUser {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  password_hash?: string;
+  created_at?: string;
+}
+
 

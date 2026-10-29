@@ -84,9 +84,9 @@ export default function AdminServicesPage() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Manage Services</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Raj Healthcare — Medical Services</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Configure your appointment offerings, durations, and pricing.
+            Configure clinical offerings, session duration, and consultation fees.
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function AdminServicesPage() {
 
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1">
-                  Price ($ USD) <span className="text-red-500">*</span>
+                  Consultation Fee (₹ INR) <span className="text-red-500">*</span>
                 </label>
                 <Input
                   type="number"

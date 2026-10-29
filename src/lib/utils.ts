@@ -5,12 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currency: string = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
+export function formatCurrency(amount: number, currency: string = "INR"): string {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -24,7 +23,7 @@ export function formatDuration(minutes: number): string {
 
 export function generateBookingReference(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let ref = "BK-";
+  let ref = "RH-";
   for (let i = 0; i < 6; i++) {
     ref += chars.charAt(Math.floor(Math.random() * chars.length));
   }

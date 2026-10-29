@@ -7,8 +7,8 @@ import { Footer } from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AuraBook | Modern Appointment Booking System",
-  description: "Seamless, responsive appointment booking system powered by Next.js, Supabase, and Resend.",
+  title: "Raj Healthcare | Doctor Consultations & Clinic Appointments",
+  description: "Schedule your doctor consultation with Raj Healthcare. Instant confirmation, transparent pricing, and zero wait times.",
 };
 
 export default function RootLayout({
@@ -26,4 +26,3 @@ export default function RootLayout({
     </html>
   );
 }
-
